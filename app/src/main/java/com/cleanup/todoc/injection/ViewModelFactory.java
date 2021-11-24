@@ -17,7 +17,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final TaskDataRepository taskDataSource;
     private final ProjectDataRepository projectDataSource;
     private final Executor executor;
-    private Application application;
+    private final Application application;
 
     public ViewModelFactory(Application application, TaskDataRepository taskDataSource, ProjectDataRepository projectDataSource, Executor executor) {
         this.application = application;
@@ -36,7 +36,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        /**if (modelClass.isAssignableFrom(TaskViewModel.class)) {
+        /* if (modelClass.isAssignableFrom(TaskViewModel.class)) {
             return (T) new TaskViewModel(taskDataSource, projectDataSource, executor);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");*/

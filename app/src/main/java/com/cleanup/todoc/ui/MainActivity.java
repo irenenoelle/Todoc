@@ -105,7 +105,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     private TaskViewModel taskViewModel;
 
-    private final ArrayList<String> allProjects = new ArrayList<String>();
+    private List<Project> allProjects = new ArrayList<Project>();
+    private List<Task> allTasks = new ArrayList<Task>();
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,7 +133,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         listTasks = findViewById(R.id.list_tasks);
         adapter = new TasksAdapter(new ArrayList<>(), MainActivity.this::onDeleteTask);
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        listTasks.setHasFixedSize(true);
         listTasks.setAdapter(adapter);
+
     }
 
     private void configureViewModel(){
@@ -177,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     @Override
     public void onDeleteTask(Task task) {
-        tasks.remove(task);
         this.taskViewModel.deleteTask(task.getId());
         updateTasks();
     }
@@ -251,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * @param task the task to be added to the list
      */
     private void addTask(@NonNull Task task) {
-        tasks.add(task);
         this.taskViewModel.createTask(task);
         this.taskViewModel.updateTask(task);
         updateTasks();
@@ -262,7 +264,15 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * Updates the list of tasks in the UI
      */
     private void updateTasks() {
-        if (tasks.size() == 0) {
+        this.taskViewModel.getAllTasks().observe(this, new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                allTasks = tasks;
+
+            }
+        });
+
+        if (allTasks.size() == 0) {
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
@@ -270,20 +280,20 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             listTasks.setVisibility(View.VISIBLE);
             switch (sortMethod) {
                 case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
+                    Collections.sort(allTasks, new Task.TaskAZComparator());
                     break;
                 case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
+                    Collections.sort(allTasks, new Task.TaskZAComparator());
                     break;
                 case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
+                    Collections.sort(allTasks, new Task.TaskRecentComparator());
                     break;
                 case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
+                    Collections.sort(allTasks, new Task.TaskOldComparator());
                     break;
 
             }
-            adapter.updateTasks(tasks);
+            adapter.updateTasks(allTasks);
         }
     }
 
@@ -338,12 +348,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.taskViewModel.getAllProjects().observe(this, new Observer<List<Project>>() {
             @Override
             public void onChanged(List<Project> projects) {
-                for(Project p: projects){
-                    allProjects.add(p.getName());
-                }
+                allProjects = projects;
             }
         });
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<Project>(this, android.R.layout.simple_spinner_item, allProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);

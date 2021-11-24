@@ -2,7 +2,6 @@ package com.cleanup.todoc.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -36,7 +35,6 @@ public abstract class SaveTasksDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             SaveTasksDatabase.class, "task_database.db").fallbackToDestructiveMigration()
                             .addCallback(prepopulateDatabase())
-                            .addCallback(roomCallBack)
                             .build();
                 }
             }
@@ -51,33 +49,53 @@ public abstract class SaveTasksDatabase extends RoomDatabase {
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
 
-                ContentValues projectValues = new ContentValues();
-                projectValues.put("id", 1L);
-                projectValues.put("name", "Projet Futur");
-                projectValues.put("color", "0xFFEADAD1");
+                ContentValues projectValues1 = new ContentValues();
+                projectValues1.put("id", 1L);
+                projectValues1.put("name", "Projet Futur");
+                projectValues1.put("color", "0xFFEADAD1");
 
-                projectValues.put("id", 2L);
-                projectValues.put("name", "Projet Hercule");
-                projectValues.put("color", "0xFFB4CDBA");
+                ContentValues projectValues2 = new ContentValues();
+                projectValues2.put("id", 2L);
+                projectValues2.put("name", "Projet Hercule");
+                projectValues2.put("color", "0xFFB4CDBA");
 
-                projectValues.put("id", 3L);
-                projectValues.put("name", "Projet Thor");
-                projectValues.put("color", "0xFFA3CED2");
+                ContentValues projectValues3 = new ContentValues();
+                projectValues3.put("id", 3L);
+                projectValues3.put("name", "Projet Thor");
+                projectValues3.put("color", "0xFFA3CED2");
 
-                ContentValues taskValues = new ContentValues();
-                taskValues.put("id", 1);
-                taskValues.put("projectId", 1L);
-                taskValues.put("name", "Nettoyer les vitres");
-                taskValues.put("creationTimestamp", 1636921060000L);
+                ContentValues taskValues1 = new ContentValues();
+                taskValues1.put("id", 1);
+                taskValues1.put("projectId", 1L);
+                taskValues1.put("name", "Nettoyer les vitres");
+                taskValues1.put("creationTimestamp", 1636921060000L);
 
+                ContentValues taskValues2 = new ContentValues();
+                taskValues2.put("id", 2);
+                taskValues2.put("projectId", 2L);
+                taskValues2.put("name", "Passer l'aspirateur");
+                taskValues2.put("creationTimestamp", new Date().getTime());
 
-                db.insert("Project", OnConflictStrategy.IGNORE, projectValues);
-                db.insert("Task", OnConflictStrategy.IGNORE, taskValues);
+                ContentValues taskValues3 = new ContentValues();
+                taskValues3.put("id", 3);
+                taskValues3.put("projectId", 3L);
+                taskValues3.put("name", "Nettoyer les toilettes");
+                taskValues3.put("creationTimestamp", new Date().getTime());
+
+                // Insert all projects
+                db.insert("Project", OnConflictStrategy.IGNORE, projectValues1);
+                db.insert("Project", OnConflictStrategy.IGNORE, projectValues2);
+                db.insert("Project", OnConflictStrategy.IGNORE, projectValues3);
+
+                db.insert("Task", OnConflictStrategy.IGNORE, taskValues1);
+                db.insert("Task", OnConflictStrategy.IGNORE, taskValues2);
+                db.insert("Task", OnConflictStrategy.IGNORE, taskValues3);
+
             }
         };
     }
 
-    private static RoomDatabase.Callback roomCallBack = new RoomDatabase.Callback(){
+    /* private static RoomDatabase.Callback roomCallBack = new RoomDatabase.Callback(){
 
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -102,6 +120,6 @@ public abstract class SaveTasksDatabase extends RoomDatabase {
             taskDao.insertTask(new Task(3,3L,"Nettoyer les toilettes", new Date().getTime()));
             return null;
        }
-    }
+    }*/
 
 }

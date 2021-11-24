@@ -2,12 +2,10 @@ package com.cleanup.todoc.ui;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.cleanup.todoc.database.dao.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repositories.ProjectDataRepository;
@@ -64,21 +62,15 @@ public class TaskViewModel extends AndroidViewModel{
     }
 
     public void createTask(Task task) {
-        executor.execute(() -> {
-            taskDataSource.createTask(task);
-        });
+        executor.execute(() -> taskDataSource.createTask(task));
     }
 
     public void deleteTask(long taskId) {
-        executor.execute(() -> {
-            taskDataSource.deleteTask(taskId);
-        });
+        executor.execute(() -> taskDataSource.deleteTask(taskId));
     }
 
     public void updateTask(Task task) {
-        executor.execute(() -> {
-            taskDataSource.updateTask(task);
-        });
+        executor.execute(() -> taskDataSource.updateTask(task));
     }
 
     public LiveData<List<Task>> getAllTasks(){

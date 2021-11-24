@@ -1,11 +1,14 @@
 package com.cleanup.todoc.model;
 
 
+import android.content.ContentValues;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Comparator;
@@ -41,6 +44,9 @@ public class Task {
      * The timestamp when the task has been created
      */
     private long creationTimestamp;
+
+    @Ignore
+    public Task() { }
 
     /**
      * Instantiates a new Task.
@@ -126,7 +132,7 @@ public class Task {
      *
      * @param creationTimestamp the timestamp when the task has been created to set
      */
-    private void setCreationTimestamp(long creationTimestamp) {
+    public void setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
@@ -168,5 +174,15 @@ public class Task {
         public int compare(Task left, Task right) {
             return (int) (left.creationTimestamp - right.creationTimestamp);
         }
+    }
+
+    // --- UTILS ---
+    public static Task fromContentValues(ContentValues values) {
+        final Task task = new Task();
+        if (values.containsKey("id")) task.setId(values.getAsLong("id"));
+        if (values.containsKey("projectId")) task.setProjectId(values.getAsLong("projectId"));
+        if (values.containsKey("name")) task.setName(values.getAsString("name"));
+        if (values.containsKey("creationTimestamp")) task.setCreationTimestamp(values.getAsLong("creationTimestamp"));
+        return task;
     }
 }
