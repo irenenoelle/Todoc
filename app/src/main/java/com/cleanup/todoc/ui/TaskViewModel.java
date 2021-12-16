@@ -48,8 +48,9 @@ public class TaskViewModel extends AndroidViewModel{
     // FOR PROJECT
     // -------------
 
-    public LiveData<Project> getProject(long projectId) { return this.currentProject;  }
+    public LiveData<Project> getProject(long projectId) { return this.projectDataSource.getProject(projectId);  }
     public LiveData<List<Project>> getAllProjects() { return allProjects;  }
+
 
 
 

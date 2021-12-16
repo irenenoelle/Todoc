@@ -115,11 +115,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         setContentView(R.layout.activity_main);
         lblNoTasks = findViewById(R.id.lbl_no_task);
 
-        this.configureRecyclerView();
         this.configureViewModel();
+        this.configureRecyclerView();
 
         this.populateDialogSpinner();
-        this.getAllTasks();
 
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private void configureRecyclerView(){
         listTasks = findViewById(R.id.list_tasks);
-        adapter = new TasksAdapter(new ArrayList<>(), MainActivity.this::onDeleteTask);
+        adapter = new TasksAdapter(new ArrayList<>(), MainActivity.this::onDeleteTask, this, taskViewModel);
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listTasks.setHasFixedSize(true);
         listTasks.setAdapter(adapter);
@@ -141,16 +140,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     private void configureViewModel(){
         ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this, getApplication());
         this.taskViewModel = ViewModelProviders.of(this, mViewModelFactory).get(TaskViewModel.class);
-        taskViewModel.getAllTasks().observe(this, tasks -> adapter.setTasks(tasks));
-
-    }
-
-    private void getAllTasks(){
-        this.taskViewModel.getAllTasks().observe(this, this::updateTasksList);
-    }
-
-    private void updateTasksList(List<Task> tasks) {
-        this.adapter.updateTasks(tasks);
+        updateTasks();
     }
 
 
@@ -259,6 +249,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         updateTasks();
     }
 
+    private void updateHeader(){
+
+    }
 
     /**
      * Updates the list of tasks in the UI
@@ -267,34 +260,35 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.taskViewModel.getAllTasks().observe(this, new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
+                //this.profileText.setText(user.getUsername());
                 allTasks = tasks;
+                if (allTasks.size() == 0) {
+                    lblNoTasks.setVisibility(View.VISIBLE);
+                    listTasks.setVisibility(View.GONE);
+                } else {
+                    lblNoTasks.setVisibility(View.GONE);
+                    listTasks.setVisibility(View.VISIBLE);
+                    switch (sortMethod) {
+                        case ALPHABETICAL:
+                            Collections.sort(allTasks, new Task.TaskAZComparator());
+                            break;
+                        case ALPHABETICAL_INVERTED:
+                            Collections.sort(allTasks, new Task.TaskZAComparator());
+                            break;
+                        case RECENT_FIRST:
+                            Collections.sort(allTasks, new Task.TaskRecentComparator());
+                            break;
+                        case OLD_FIRST:
+                            Collections.sort(allTasks, new Task.TaskOldComparator());
+                            break;
 
+                    }
+                    adapter.updateTasks(allTasks);
+                }
             }
         });
 
-        if (allTasks.size() == 0) {
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
-        } else {
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
-            switch (sortMethod) {
-                case ALPHABETICAL:
-                    Collections.sort(allTasks, new Task.TaskAZComparator());
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    Collections.sort(allTasks, new Task.TaskZAComparator());
-                    break;
-                case RECENT_FIRST:
-                    Collections.sort(allTasks, new Task.TaskRecentComparator());
-                    break;
-                case OLD_FIRST:
-                    Collections.sort(allTasks, new Task.TaskOldComparator());
-                    break;
 
-            }
-            adapter.updateTasks(allTasks);
-        }
     }
 
 

@@ -1,12 +1,21 @@
 package com.cleanup.todoc.model;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.Observer;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import com.cleanup.todoc.ui.MainActivity;
+import com.cleanup.todoc.ui.TaskViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>Models for project in which tasks are included.</p>
@@ -16,6 +25,9 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Project {
+    private static TaskViewModel taskViewModel;
+    private static List<Project> allProjects = new ArrayList<Project>();
+
     /**
      * The unique identifier of the project
      */
@@ -54,11 +66,12 @@ public class Project {
      */
     @NonNull
     public static Project[] getAllProjects() {
-        return new Project[]{
+        return null;
+        /*return new Project[]{
                 new Project(1L, "Projet Tartampion", 0xFFEADAD1),
                 new Project(2L, "Projet Lucidia", 0xFFB4CDBA),
                 new Project(3L, "Projet Circus", 0xFFA3CED2),
-        };
+        };*/
     }
 
     /**
@@ -70,7 +83,14 @@ public class Project {
      */
     @Nullable
     public static Project getProjectById(long id) {
-        for (Project project : getAllProjects()) {
+        taskViewModel.getAllProjects().observe(getApplicationContext(),
+                new Observer<List<Project>>() {
+                    @Override
+                    public void onChanged(List<Project> projects) {
+                        allProjects = projects;
+                    }
+                });
+        for (Project project : allProjects) {
             if (project.id == id)
                 return project;
         }
