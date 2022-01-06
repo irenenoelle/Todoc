@@ -1,7 +1,5 @@
 package com.cleanup.todoc.model;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -83,17 +81,7 @@ public class Project {
      */
     @Nullable
     public static Project getProjectById(long id) {
-        taskViewModel.getAllProjects().observe(getApplicationContext(),
-                new Observer<List<Project>>() {
-                    @Override
-                    public void onChanged(List<Project> projects) {
-                        allProjects = projects;
-                    }
-                });
-        for (Project project : allProjects) {
-            if (project.id == id)
-                return project;
-        }
+
         return null;
     }
 

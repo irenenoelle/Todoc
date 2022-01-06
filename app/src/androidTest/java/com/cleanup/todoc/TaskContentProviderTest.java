@@ -12,23 +12,27 @@ import android.net.Uri;
 
 import androidx.room.Room;
 import androidx.test.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.runner.AndroidJUnit4;
+
 
 import com.cleanup.todoc.database.SaveTasksDatabase;
 import com.cleanup.todoc.provider.TaskContentProvider;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TaskContentProviderTest {
 
     // FOR DATA
     private ContentResolver mContentResolver;
 
     // DATA SET FOR TEST
-    private static long PROJECT_ID = 1L;
+    private static long PROJECT_ID = 1;
 
     @Before
     public void setUp() {
@@ -40,7 +44,7 @@ public class TaskContentProviderTest {
     }
 
     @Test
-    public void getTasksWhenNoTaskInserted() {
+    public void getTasksBeforeInsertTask() {
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(TaskContentProvider.URI_ITEM, PROJECT_ID), null, null, null, null);
         assertThat(cursor, notNullValue());
         assertThat(cursor.getCount(), is(0));
@@ -50,18 +54,18 @@ public class TaskContentProviderTest {
     @Test
     public void insertAndGetTask() {
         // BEFORE : Adding demo task
-        final Uri userUri = mContentResolver.insert(TaskContentProvider.URI_ITEM, generateItem());
+        final Uri userUri = mContentResolver.insert(TaskContentProvider.URI_ITEM, generateTask());
         // TEST
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(TaskContentProvider.URI_ITEM, PROJECT_ID), null, null, null, null);
         assertThat(cursor, notNullValue());
         assertThat(cursor.getCount(), is(1));
-        assertThat(cursor.moveToFirst(), is(true));
+        assertThat(cursor.moveToLast(), is(true));
         assertThat(cursor.getString(cursor.getColumnIndexOrThrow("name")), is("Vider les poubelles"));
     }
 
     // ---
 
-    private ContentValues generateItem(){
+    private ContentValues generateTask(){
         final ContentValues values = new ContentValues();
         values.put("id", 4);
         values.put("projectId", 1L);

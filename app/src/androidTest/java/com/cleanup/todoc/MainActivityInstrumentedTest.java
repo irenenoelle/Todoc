@@ -3,11 +3,20 @@ package com.cleanup.todoc;
 import android.view.View;
 import android.widget.TextView;
 
+import com.cleanup.todoc.database.SaveTasksDatabase;
+import com.cleanup.todoc.injection.ViewModelFactory;
+import com.cleanup.todoc.model.Project;
+import com.cleanup.todoc.repositories.ProjectDataRepository;
 import com.cleanup.todoc.ui.MainActivity;
+import com.cleanup.todoc.ui.TaskViewModel;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -22,8 +31,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.room.Room;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.AndroidJUnit4;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -32,9 +42,43 @@ import androidx.test.rule.ActivityTestRule;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
+
 public class MainActivityInstrumentedTest {
     @Rule
     public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+
+    /*private TaskViewModel tasksViewModel;
+
+    private MainActivity mainActivity;
+
+    @Before
+    public void initDatabase() {
+        mainActivity = rule.getActivity();
+
+        // Initialize database
+        SaveTasksDatabase database = Room.inMemoryDatabaseBuilder(mainActivity, SaveTasksDatabase.class).build();
+
+        // Initiates a Factory to create ViewModel instances
+        ViewModelFactory factory = new ViewModelFactory(mainActivity.getApplication(), null, null, null);
+        tasksViewModel = factory.create(TaskViewModel.class);
+
+        // Initialize Repositories
+        ProjectDataRepository projectRepository = new ProjectDataRepository(database.projectDao());
+
+        // Initialize parent table in database
+        Project[] projects = DI.provideProjects(mainActivity);
+
+        for(Project project : projects) {
+            projectRepository.insertProject(project);
+        }
+    }
+
+
+    @After
+    public void cleanDatabase() {
+        // Clean task_table for next test
+        tasksViewModel.;
+    }*/
 
     @Test
     public void addAndRemoveTask() {

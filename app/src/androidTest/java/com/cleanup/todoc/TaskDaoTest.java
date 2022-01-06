@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
 import androidx.test.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.runner.AndroidJUnit4;
 
 import com.cleanup.todoc.database.SaveTasksDatabase;
 import com.cleanup.todoc.model.Project;
@@ -107,4 +107,5 @@ public class TaskDaoTest {
         List<Task> tasks = LiveDataTestUtil.getValue(this.database.taskDao().getTasks(PROJECT_ID));
         assertTrue(tasks.isEmpty());
     }
+
 }
